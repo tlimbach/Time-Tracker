@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Vector;
 
+import javax.lang.model.util.Elements;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -208,7 +209,7 @@ public class ProjectListWindow extends JFrame {
 
     private void addTrayIcon() {
 
-        trayIcon = new TrayIcon(timegreengif, "Java-Tray ", createPopup());
+        trayIcon = new TrayIcon(timegreengif, "Timetracker", createPopup());
         trayIcon.setImageAutoSize(true);
         trayIcon.addActionListener(new ActionListener() {
             public void actionPerformed(final ActionEvent arg0) {
@@ -222,6 +223,12 @@ public class ProjectListWindow extends JFrame {
 
             @Override
             public void mousePressed(final MouseEvent arg0) {
+
+                if (arg0.getClickCount() == 1 && arg0.getButton() == 1) {
+
+                    showMainWindow(!isVisible());
+                }
+
                 trayIcon.setPopupMenu(createPopup());
             }
 
@@ -245,9 +252,7 @@ public class ProjectListWindow extends JFrame {
         menu.add(itm_maximize);
         itm_maximize.addActionListener(new ActionListener() {
             public void actionPerformed(final ActionEvent e) {
-                ProjectListWindow.this.setVisible(true);
-                ProjectListWindow.this.setExtendedState(JFrame.NORMAL);
-                ProjectListWindow.this.toFront();
+                showMainWindow(true);
             }
         });
         final MenuItem itm_showMiniwindow = new MenuItem("Minifenster anzeigen");
@@ -331,6 +336,18 @@ public class ProjectListWindow extends JFrame {
         menu.setEnabled(true);
 
         return menu;
+    }
+
+    private void showMainWindow(boolean doShow) {
+        setVisible(doShow);
+
+        setExtendedState(doShow ? JFrame.NORMAL:JFrame.ICONIFIED);
+
+        if (doShow) {
+           toFront();
+        } else {
+            toBack();
+        }
     }
 
     private void fillProjectMenu() {
